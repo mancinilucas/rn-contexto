@@ -14,7 +14,19 @@ const Stack = createStackNavigator();
 
 const AppNavigator = () => {
   return (
-    <Stack.Navigator initialRouteName="Home">
+    <Stack.Navigator
+      initialRouteName="Home"
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: "#f3ba63"
+        },
+        headerTintColor: "#1b7f8c",
+        headerTitleStyle: {
+          fontWeight: "bold",
+          fontSize: 24
+        }
+      }}
+    >
       <Stack.Screen
         name="Home"
         component={Home}
