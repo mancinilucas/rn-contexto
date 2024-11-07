@@ -1,6 +1,5 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import { NavigationContainer } from "@react-navigation/native";
 
 // Importe suas telas (crie-as conforme as necessidades do projeto)
 import Home from "../screens/Home";

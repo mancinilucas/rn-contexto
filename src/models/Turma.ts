@@ -1,7 +1,7 @@
 import { Aluno } from "./Aluno";
 
 export interface Turma {
-  id: string;
+  id: number;
   nome: string;
   alunos: Aluno[];
 }
