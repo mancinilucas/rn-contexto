@@ -2,15 +2,28 @@ import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  FlatList,
   TouchableOpacity,
+  FlatList,
   Alert,
   StyleSheet
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Turma } from "../models";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../models/Types";
 
-const GerenciamentoDeTurmas = ({ navigation }: any) => {
+type GerenciamentoDeTurmasNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "GerenciamentoDeTurmas"
+>;
+
+interface GerenciamentoDeTurmasProps {
+  navigation: GerenciamentoDeTurmasNavigationProp;
+}
+
+const GerenciarTurmas: React.FC<GerenciamentoDeTurmasProps> = ({
+  navigation
+}) => {
   const [turmas, setTurmas] = useState<Turma[]>([]);
 
   useEffect(() => {
@@ -24,23 +37,26 @@ const GerenciamentoDeTurmas = ({ navigation }: any) => {
         console.error("Erro ao carregar turmas:", error);
       }
     };
+
     fetchTurmas();
   }, []);
 
+  const handleTurmaSelect = (turmaId: number) => {
+    navigation.navigate("AlunosDaTurma", { turmaId });
+  };
+
   return (
-    <View style={styles.container}>
+    <View>
       <Text style={styles.title}>Gerenciamento de Turmas</Text>
       <FlatList
         data={turmas}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity
+            onPress={() => handleTurmaSelect(item.id)}
             style={styles.turmaItem}
-            onPress={() =>
-              navigation.navigate("AlunosDaTurma", { turmaId: item.id })
-            }
           >
-            <Text style={styles.turmaText}>{item.nome}</Text>
+            <Text style={styles.turmaName}>{item.nome}</Text>
           </TouchableOpacity>
         )}
       />
@@ -49,27 +65,27 @@ const GerenciamentoDeTurmas = ({ navigation }: any) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: "#f8f8f8"
-  },
   title: {
     fontSize: 24,
+    fontWeight: "bold",
+    color: "#1b7f8c",
+    textAlign: "center",
     marginBottom: 20,
-    textAlign: "center"
+    marginTop: 20
   },
   turmaItem: {
     padding: 15,
-    backgroundColor: "#4CAF50",
-    borderRadius: 10,
-    marginBottom: 10
+    marginBottom: 10,
+    backgroundColor: "#f3ba63",
+    borderRadius: 5,
+    alignItems: "center",
+    borderColor: "#1b7f8c"
   },
-  turmaText: {
-    color: "#fff",
+  turmaName: {
     fontSize: 18,
-    textAlign: "center"
+    fontWeight: "bold",
+    color: "#1b7f8c"
   }
 });
 
-export default GerenciamentoDeTurmas;
+export default GerenciarTurmas;

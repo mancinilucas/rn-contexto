@@ -59,6 +59,15 @@ const CadastrarAluno = ({ navigation }: any) => {
       return;
     }
 
+    const alunoExiste = novaTurma.alunos.some(
+      (aluno) =>
+        aluno.nome.trim().toLowerCase() === nomeAluno.trim().toLowerCase()
+    );
+    if (alunoExiste) {
+      Alert.alert("Erro", "Este aluno já está cadastrado nesta turma.");
+      return;
+    }
+
     const novoAluno: Aluno = {
       id: alunos.length + 1,
       nome: nomeAluno.trim(),

@@ -1,15 +1,14 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-
-// Importe suas telas (crie-as conforme as necessidades do projeto)
+import { RootStackParamList } from "../models/Types";
 import Home from "../screens/Home";
 import CadastrarTurma from "../screens/CadastrarTurma";
 import GerenciarTurma from "../screens/GerenciarTurma";
 import CadastrarAluno from "../screens/CadastrarAluno";
 import GerenciarAluno from "../screens/GerenciarAluno";
+import AlunosDaTurma from "../screens/AlunosDaTurma";
 
-// Crie o Stack Navigator
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<RootStackParamList>();
 
 const AppNavigator = () => {
   return (
@@ -50,6 +49,16 @@ const AppNavigator = () => {
         name="GerenciarAluno"
         component={GerenciarAluno}
         options={{ title: "Gerenciar Aluno" }}
+      />
+      <Stack.Screen
+        name="GerenciamentoDeTurmas" // Corrigir o nome se necessário
+        component={GerenciarTurma} // Certifique-se de que é o componente correto
+        options={{ title: "Gerenciamento de Turmas" }}
+      />
+      <Stack.Screen
+        name="AlunosDaTurma"
+        component={AlunosDaTurma}
+        options={{ title: "Alunos da Turma" }}
       />
     </Stack.Navigator>
   );
