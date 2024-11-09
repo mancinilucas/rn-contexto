@@ -1,5 +1,6 @@
 export interface Aluno {
-  id: string;
+  id: number;
   nome: string;
-  notas: number[];
+  notas?: number[];
+  turmaId: number;
 }
