@@ -14,7 +14,10 @@ import { Turma, Aluno } from "../models";
 import CustomPicker from "../components/CustomPicker";
 
 const CadastrarAluno = ({ navigation }: any) => {
-  const [alunos, setAlunos] = useState<Aluno[]>([]);
+  const [alunos, setAlunos] = useState<Aluno[]>([
+    { id: 1, nome: "João Silva", notas: [], turmaId: 1 },
+    { id: 2, nome: "Maria Oliveira", notas: [], turmaId: 1 }
+  ]);
   const [turmas, setTurmas] = useState<Turma[]>([]);
   const [nomeAluno, setNomeAluno] = useState<string>("");
   const [selectedTurmaId, setSelectedTurmaId] = useState<number | undefined>(
@@ -63,6 +66,7 @@ const CadastrarAluno = ({ navigation }: any) => {
       (aluno) =>
         aluno.nome.trim().toLowerCase() === nomeAluno.trim().toLowerCase()
     );
+
     if (alunoExiste) {
       Alert.alert("Erro", "Este aluno já está cadastrado nesta turma.");
       return;
@@ -71,6 +75,7 @@ const CadastrarAluno = ({ navigation }: any) => {
     const novoAluno: Aluno = {
       id: alunos.length + 1,
       nome: nomeAluno.trim(),
+      notas: [],
       turmaId: selectedTurmaId
     };
 

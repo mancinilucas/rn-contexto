@@ -51,8 +51,8 @@ const AppNavigator = () => {
         options={{ title: "Gerenciar Aluno" }}
       />
       <Stack.Screen
-        name="GerenciamentoDeTurmas" // Corrigir o nome se necessário
-        component={GerenciarTurma} // Certifique-se de que é o componente correto
+        name="GerenciamentoDeTurmas"
+        component={GerenciarTurma}
         options={{ title: "Gerenciamento de Turmas" }}
       />
       <Stack.Screen

@@ -35,7 +35,7 @@ const AlunosDaTurma: React.FC<AlunosDaTurmaProps> = ({ navigation }) => {
   const route = useRoute();
   const { turmaId } = route.params as RouteParams;
   const [alunos, setAlunos] = useState<Aluno[]>([]);
-  const [turma, setTurma] = useState<Turma | null>(null); // Definindo o estado para armazenar a turma
+  const [turma, setTurma] = useState<Turma | null>(null);
 
   useEffect(() => {
     const fetchTurmaAndAlunos = async () => {
@@ -45,8 +45,15 @@ const AlunosDaTurma: React.FC<AlunosDaTurmaProps> = ({ navigation }) => {
           const turmas: Turma[] = JSON.parse(storedTurmas);
           const turmaSelecionada = turmas.find((t) => t.id === turmaId);
           if (turmaSelecionada) {
-            setTurma(turmaSelecionada); // Define a turma selecionada
-            setAlunos(turmaSelecionada.alunos); // Define os alunos dessa turma
+            setTurma(turmaSelecionada);
+            const storedAlunos = await AsyncStorage.getItem("alunos");
+            if (storedAlunos) {
+              const alunos: Aluno[] = JSON.parse(storedAlunos);
+              const alunosDaTurma = alunos.filter(
+                (aluno) => aluno.turmaId === turmaId
+              );
+              setAlunos(alunosDaTurma);
+            }
           }
         }
       } catch (error) {
@@ -66,7 +73,6 @@ const AlunosDaTurma: React.FC<AlunosDaTurmaProps> = ({ navigation }) => {
   }
 
   const handleExcluirAluno = async (alunoId: number) => {
-    // Confirmação de exclusão
     Alert.alert(
       "Confirmar Exclusão",
       "Tem certeza que deseja excluir este aluno?",
@@ -79,15 +85,11 @@ const AlunosDaTurma: React.FC<AlunosDaTurmaProps> = ({ navigation }) => {
           text: "Excluir",
           onPress: async () => {
             try {
-              // Filtra os alunos, removendo o aluno com o id correspondente
               const alunosAtualizados = alunos.filter(
                 (aluno) => aluno.id !== alunoId
               );
-
-              // Atualiza o estado com a lista de alunos sem o aluno excluído
               setAlunos(alunosAtualizados);
 
-              // Atualiza os dados da turma no AsyncStorage
               const storedTurmas = await AsyncStorage.getItem("turmas");
               if (storedTurmas) {
                 const turmas: Turma[] = JSON.parse(storedTurmas);
@@ -95,9 +97,7 @@ const AlunosDaTurma: React.FC<AlunosDaTurmaProps> = ({ navigation }) => {
                   (turma) => turma.id === turmaId
                 );
                 if (turmaIndex > -1) {
-                  // Atualiza a lista de alunos na turma específica
                   turmas[turmaIndex].alunos = alunosAtualizados;
-                  // Salva novamente as turmas no AsyncStorage
                   await AsyncStorage.setItem("turmas", JSON.stringify(turmas));
                   Alert.alert("Sucesso", "Aluno excluído com sucesso!");
                 }
@@ -133,6 +133,7 @@ const AlunosDaTurma: React.FC<AlunosDaTurmaProps> = ({ navigation }) => {
             </TouchableOpacity>
           </View>
         )}
+        ListEmptyComponent={<Text>Nenhum aluno encontrado</Text>}
       />
     </View>
   );
@@ -157,22 +158,27 @@ const styles = StyleSheet.create({
     marginBottom: 20
   },
   alunoItem: {
+    flexDirection: "row",
     backgroundColor: "#f3ba63",
     padding: 15,
     borderRadius: 5,
     marginBottom: 10,
-    borderWidth: 1,
-    borderColor: "#1b7f8c"
+    alignItems: "center",
+    justifyContent: "space-between"
   },
   alunoName: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#1b7f8c"
+    color: "#1b7f8c",
+    flex: 1,
+    marginRight: 10
   },
   actionText: {
     color: "#ea403f",
     marginTop: 5,
-    fontSize: 16
+    fontSize: 18,
+    fontWeight: "bold",
+    paddingHorizontal: 10
   }
 });
 
