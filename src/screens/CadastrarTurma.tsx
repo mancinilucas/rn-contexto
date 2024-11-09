@@ -11,14 +11,13 @@ import {
   Button
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Turma } from "../models"; // Importe a interface Turma
+import { Turma } from "../models";
 
 const CadastrarTurma = ({ navigation }: any) => {
-  const [turmas, setTurmas] = useState<Turma[]>([]); // Tipando o estado como um array de Turma
-  const [nomeTurma, setNomeTurma] = useState(""); // Estado para armazenar o nome da turma
-  const [modalVisible, setModalVisible] = useState(false); // Estado para controlar a visibilidade do modal
+  const [turmas, setTurmas] = useState<Turma[]>([]);
+  const [nomeTurma, setNomeTurma] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
 
-  // Carregar as turmas armazenadas localmente ao montar o componente
   useEffect(() => {
     const fetchTurmas = async () => {
       try {
@@ -34,10 +33,17 @@ const CadastrarTurma = ({ navigation }: any) => {
     fetchTurmas();
   }, []);
 
-  // Função para adicionar uma nova turma
   const adicionarTurma = async () => {
     if (nomeTurma.trim() === "") {
       Alert.alert("Erro", "Por favor, insira o nome da turma.");
+      return;
+    }
+
+    const nomeExistente = turmas.some(
+      (turma) => turma.nome.toLowerCase() === nomeTurma.trim().toLowerCase()
+    );
+    if (nomeExistente) {
+      Alert.alert("Erro", "Já existe uma turma com esse nome.");
       return;
     }
 
@@ -52,22 +58,21 @@ const CadastrarTurma = ({ navigation }: any) => {
     const novaTurma: Turma = {
       id: turmas.length + 1,
       nome: nomeTurma.trim(),
-      alunos: [] // Inicialmente sem alunos
+      alunos: []
     };
 
     const novasTurmas = [...turmas, novaTurma];
     setTurmas(novasTurmas);
-    setNomeTurma(""); // Limpar o campo de nome da turma
+    setNomeTurma("");
 
     try {
       await AsyncStorage.setItem("turmas", JSON.stringify(novasTurmas));
-      setModalVisible(false); // Fechar o modal após a criação da turma
+      setModalVisible(false);
     } catch (error) {
       console.error("Erro ao salvar nova turma:", error);
     }
   };
 
-  // Função para excluir uma turma
   const excluirTurma = async (id: number) => {
     const novasTurmas = turmas.filter((turma) => turma.id !== id);
     setTurmas(novasTurmas);
