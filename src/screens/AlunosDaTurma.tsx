@@ -11,7 +11,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Aluno, Turma } from "../models";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../models/Types";
+import { RootStackParamList } from "../models/types";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { RouteProp } from "@react-navigation/native";
 import CustomPicker from "../components/CustomPicker";

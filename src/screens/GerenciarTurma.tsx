@@ -10,7 +10,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Turma } from "../models";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../models/Types";
+import { RootStackParamList } from "../models/types";
 
 type GerenciamentoDeTurmasNavigationProp = StackNavigationProp<
   RootStackParamList,

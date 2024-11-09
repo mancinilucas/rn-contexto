@@ -1,6 +1,6 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import { RootStackParamList } from "../models/Types";
+import { RootStackParamList } from "../models/types";
 import Home from "../screens/Home";
 import CadastrarTurma from "../screens/CadastrarTurma";
 import GerenciarTurma from "../screens/GerenciarTurma";
