@@ -9,34 +9,37 @@ import {
   Alert,
   StyleSheet
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Turma, Aluno } from "../models";
+import CustomPicker from "../components/CustomPicker";
 
 const CadastrarAluno = ({ navigation }: any) => {
+  const [alunos, setAlunos] = useState<Aluno[]>([]);
   const [turmas, setTurmas] = useState<Turma[]>([]);
-
   const [nomeAluno, setNomeAluno] = useState<string>("");
-
   const [selectedTurmaId, setSelectedTurmaId] = useState<number | undefined>(
     undefined
   );
-
   const [modalVisible, setModalVisible] = useState<boolean>(false);
 
   useEffect(() => {
-    const fetchTurmas = async () => {
+    const fetchData = async () => {
       try {
         const storedTurmas = await AsyncStorage.getItem("turmas");
         if (storedTurmas) {
           setTurmas(JSON.parse(storedTurmas));
         }
+
+        const storedAlunos = await AsyncStorage.getItem("alunos");
+        if (storedAlunos) {
+          setAlunos(JSON.parse(storedAlunos));
+        }
       } catch (error) {
-        console.error("Erro ao carregar turmas:", error);
+        console.error("Erro ao carregar dados:", error);
       }
     };
 
-    fetchTurmas();
+    fetchData();
   }, []);
 
   const adicionarAluno = async () => {
@@ -50,31 +53,28 @@ const CadastrarAluno = ({ navigation }: any) => {
       return;
     }
 
+    const novaTurma = turmas.find((turma) => turma.id === selectedTurmaId);
+    if (!novaTurma) {
+      Alert.alert("Erro", "Turma não encontrada.");
+      return;
+    }
+
+    const novoAluno: Aluno = {
+      id: alunos.length + 1,
+      nome: nomeAluno.trim(),
+      turmaId: selectedTurmaId
+    };
+
+    const novosAlunos = [...alunos, novoAluno];
+    setAlunos(novosAlunos);
+    setNomeAluno("");
+    setSelectedTurmaId(undefined);
+
     try {
-      const storedAlunos = await AsyncStorage.getItem("alunos");
-      const alunos: Aluno[] = storedAlunos ? JSON.parse(storedAlunos) : [];
-
-      const novoAluno: Aluno = {
-        id: alunos.length + 1,
-        nome: nomeAluno.trim(),
-        turmaId: selectedTurmaId
-      };
-
-      const novosAlunos = [...alunos, novoAluno];
       await AsyncStorage.setItem("alunos", JSON.stringify(novosAlunos));
-
-      Alert.alert("Sucesso", "Aluno cadastrado com sucesso!");
-
-      setNomeAluno("");
-      setSelectedTurmaId(undefined);
       setModalVisible(false);
     } catch (error) {
       console.error("Erro ao salvar novo aluno:", error);
-
-      Alert.alert(
-        "Erro",
-        "Não foi possível cadastrar o aluno. Tente novamente."
-      );
     }
   };
 
@@ -88,7 +88,6 @@ const CadastrarAluno = ({ navigation }: any) => {
     <View style={styles.container}>
       <Text style={styles.title}>Cadastro de Alunos</Text>
 
-      {/* Botão para abrir o modal de cadastro de aluno */}
       <TouchableOpacity
         style={styles.button}
         onPress={() => setModalVisible(true)}
@@ -96,7 +95,6 @@ const CadastrarAluno = ({ navigation }: any) => {
         <Text style={styles.buttonText}>Cadastrar Novo Aluno</Text>
       </TouchableOpacity>
 
-      {/* Modal para cadastrar aluno */}
       <Modal
         transparent={true}
         animationType="slide"
@@ -112,21 +110,11 @@ const CadastrarAluno = ({ navigation }: any) => {
               value={nomeAluno}
               onChangeText={setNomeAluno}
             />
-            <Picker
+            <CustomPicker
+              turmas={turmas}
               selectedValue={selectedTurmaId}
-              style={styles.picker}
-              onValueChange={(itemValue) => setSelectedTurmaId(itemValue)}
-            >
-              <Picker.Item label="Selecione a Turma" value={undefined} />
-              {turmas.map((turma) => (
-                <Picker.Item
-                  key={turma.id}
-                  label={turma.nome}
-                  value={turma.id}
-                />
-              ))}
-            </Picker>
-
+              onValueChange={setSelectedTurmaId}
+            />
             <View style={styles.modalButtons}>
               <Button
                 title="Cancelar"
@@ -211,6 +199,15 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-between"
+  },
+  listItem: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc"
+  },
+  listText: {
+    fontSize: 16,
+    color: "#333"
   }
 });
 
