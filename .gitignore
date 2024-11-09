@@ -34,5 +34,10 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
+<<<<<<< HEAD
 # local file
 %ProgramData%
+=======
+
+%ProgramData%
+>>>>>>> 6271e2e (gitignore update)
