@@ -38,29 +38,29 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#fff6eb" // Cor de fundo da tela
+    backgroundColor: "#fff6eb"
   },
   title: {
     fontSize: 28,
     marginBottom: 20,
-    color: "#1b7f8c", // Cor do texto do título
+    color: "#1b7f8c",
     fontWeight: "bold"
   },
   button: {
-    backgroundColor: "#f3ba63", // Cor de fundo dos botões
+    backgroundColor: "#f3ba63",
     padding: 15,
     borderRadius: 10,
     marginVertical: 10,
     width: "80%",
     alignItems: "center",
-    shadowColor: "#ea403f", // Cor da sombra
+    shadowColor: "#ea403f",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 5 // Para Android
+    elevation: 5
   },
   buttonText: {
-    color: "#1b7f8c", // Cor do texto dos botões
+    color: "#1b7f8c",
     fontSize: 18,
     fontWeight: "600"
   }

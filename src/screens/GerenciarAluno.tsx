@@ -151,7 +151,6 @@ const GerenciarAluno: React.FC<GerenciamentoDeTurmasProps> = ({
         <View style={styles.modalContainer}>
           <Text style={styles.modalTitle}>Adicionar Nova Nota</Text>
 
-          {/* Campo para inserir a nota */}
           <TextInput
             style={styles.input}
             placeholder="Nota (0 a 1000)"
@@ -160,7 +159,6 @@ const GerenciarAluno: React.FC<GerenciamentoDeTurmasProps> = ({
             keyboardType="numeric"
           />
 
-          {/* Campo para inserir a data */}
           <TextInput
             style={styles.input}
             placeholder="Data (dd/MM/AAAA)"

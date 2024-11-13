@@ -88,7 +88,6 @@ const CadastrarTurma = ({ navigation }: any) => {
     <View style={styles.container}>
       <Text style={styles.title}>Cadastro de Turmas</Text>
 
-      {/* Botão para abrir o modal de cadastro de turma */}
       <TouchableOpacity
         style={styles.button}
         onPress={() => setModalVisible(true)}
@@ -105,7 +104,6 @@ const CadastrarTurma = ({ navigation }: any) => {
               {item.id}. {item.nome}
             </Text>
 
-            {/* Botão para excluir a turma */}
             <TouchableOpacity
               onPress={() => excluirTurma(item.id)}
               style={styles.deleteButton}
@@ -116,7 +114,6 @@ const CadastrarTurma = ({ navigation }: any) => {
         )}
       />
 
-      {/* Modal para adicionar uma nova turma */}
       <Modal
         transparent={true}
         animationType="slide"
