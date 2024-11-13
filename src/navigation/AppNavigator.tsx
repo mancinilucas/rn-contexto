@@ -7,6 +7,7 @@ import GerenciarTurma from "../screens/GerenciarTurma";
 import CadastrarAluno from "../screens/CadastrarAluno";
 import GerenciarAluno from "../screens/GerenciarAluno";
 import AlunosDaTurma from "../screens/AlunosDaTurma";
+import ExibirNota from "../screens/ExibirNota";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -59,6 +60,11 @@ const AppNavigator = () => {
         name="AlunosDaTurma"
         component={AlunosDaTurma}
         options={{ title: "Alunos da Turma" }}
+      />
+      <Stack.Screen
+        name="ExibirNota"
+        component={ExibirNota}
+        options={{ title: "Nota do aluno" }}
       />
     </Stack.Navigator>
   );

@@ -1,6 +1,7 @@
+import { Nota } from "./Nota";
 export interface Aluno {
   id: number;
   nome: string;
-  notas?: number[];
+  notas?: Nota[];
   turmaId: number;
 }

@@ -5,16 +5,18 @@ import {
   TouchableOpacity,
   FlatList,
   Alert,
-  ActivityIndicator,
+  Modal,
+  TextInput,
+  Button,
   StyleSheet
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Picker } from "@react-native-picker/picker";
 import { Aluno, Turma } from "../models";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../models/types";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { RouteProp } from "@react-navigation/native";
-import CustomPicker from "../components/CustomPicker";
 
 type RouteParams = {
   turmaId: number;
@@ -35,21 +37,27 @@ const AlunosDaTurma: React.FC<AlunosDaTurmaProps> = ({ navigation }) => {
   const route = useRoute();
   const { turmaId } = route.params as RouteParams;
   const [alunos, setAlunos] = useState<Aluno[]>([]);
+  const [turmas, setTurmas] = useState<Turma[]>([]);
   const [turma, setTurma] = useState<Turma | null>(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedAluno, setSelectedAluno] = useState<Aluno | null>(null);
+  const [editedNome, setEditedNome] = useState<string>("");
+  const [editedTurmaId, setEditedTurmaId] = useState<number>(turmaId);
 
   useEffect(() => {
-    const fetchTurmaAndAlunos = async () => {
+    const fetchTurmasAndAlunos = async () => {
       try {
         const storedTurmas = await AsyncStorage.getItem("turmas");
         if (storedTurmas) {
-          const turmas: Turma[] = JSON.parse(storedTurmas);
-          const turmaSelecionada = turmas.find((t) => t.id === turmaId);
+          const parsedTurmas: Turma[] = JSON.parse(storedTurmas);
+          setTurmas(parsedTurmas);
+          const turmaSelecionada = parsedTurmas.find((t) => t.id === turmaId);
           if (turmaSelecionada) {
             setTurma(turmaSelecionada);
             const storedAlunos = await AsyncStorage.getItem("alunos");
             if (storedAlunos) {
-              const alunos: Aluno[] = JSON.parse(storedAlunos);
-              const alunosDaTurma = alunos.filter(
+              const parsedAlunos: Aluno[] = JSON.parse(storedAlunos);
+              const alunosDaTurma = parsedAlunos.filter(
                 (aluno) => aluno.turmaId === turmaId
               );
               setAlunos(alunosDaTurma);
@@ -61,8 +69,38 @@ const AlunosDaTurma: React.FC<AlunosDaTurmaProps> = ({ navigation }) => {
       }
     };
 
-    fetchTurmaAndAlunos();
+    fetchTurmasAndAlunos();
   }, [turmaId]);
+
+  const handleOpenEditModal = (aluno: Aluno) => {
+    setSelectedAluno(aluno);
+    setEditedNome(aluno.nome);
+    setEditedTurmaId(aluno.turmaId);
+    setIsModalVisible(true);
+  };
+
+  const handleSaveEdit = async () => {
+    if (selectedAluno) {
+      try {
+        const updatedAlunos = alunos.map((aluno) =>
+          aluno.id === selectedAluno.id
+            ? { ...aluno, nome: editedNome, turmaId: editedTurmaId }
+            : aluno
+        );
+        setAlunos(updatedAlunos);
+        await AsyncStorage.setItem("alunos", JSON.stringify(updatedAlunos));
+        Alert.alert("Sucesso", "Alterações salvas com sucesso!");
+        setIsModalVisible(false);
+      } catch (error) {
+        console.error("Erro ao salvar alterações:", error);
+        Alert.alert("Erro", "Não foi possível salvar as alterações.");
+      }
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalVisible(false);
+  };
 
   if (!turma) {
     return (
@@ -121,11 +159,7 @@ const AlunosDaTurma: React.FC<AlunosDaTurmaProps> = ({ navigation }) => {
         renderItem={({ item }) => (
           <View style={styles.alunoItem}>
             <Text style={styles.alunoName}>{item.nome}</Text>
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate("EditarAluno", { alunoId: item.id })
-              }
-            >
+            <TouchableOpacity onPress={() => handleOpenEditModal(item)}>
               <Text style={styles.actionText}>Editar</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => handleExcluirAluno(item.id)}>
@@ -135,6 +169,28 @@ const AlunosDaTurma: React.FC<AlunosDaTurmaProps> = ({ navigation }) => {
         )}
         ListEmptyComponent={<Text>Nenhum aluno encontrado</Text>}
       />
+
+      <Modal visible={isModalVisible} animationType="slide">
+        <View style={styles.modalContainer}>
+          <Text style={styles.modalTitle}>Editar Aluno</Text>
+          <TextInput
+            style={styles.input}
+            value={editedNome}
+            onChangeText={setEditedNome}
+            placeholder="Nome do Aluno"
+          />
+          <Picker
+            selectedValue={editedTurmaId}
+            onValueChange={(itemValue) => setEditedTurmaId(itemValue)}
+          >
+            {turmas.map((turma) => (
+              <Picker.Item key={turma.id} label={turma.nome} value={turma.id} />
+            ))}
+          </Picker>
+          <Button title="Salvar" onPress={handleSaveEdit} />
+          <Button title="Cancelar" onPress={handleCloseModal} color="#ea403f" />
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -179,6 +235,24 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     paddingHorizontal: 10
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    padding: 20,
+    backgroundColor: "#fff"
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 20
   }
 });
 

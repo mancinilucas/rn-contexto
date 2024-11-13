@@ -7,4 +7,5 @@ export type RootStackParamList = {
   GerenciamentoDeTurmas: undefined;
   AlunosDaTurma: { turmaId: number };
   EditarAluno: { alunoId: number };
+  ExibirNota: { alunoId: number };
 };
